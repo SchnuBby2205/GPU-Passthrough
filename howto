@@ -1,3 +1,5 @@
+https://www.youtube.com/watch?v=uOuzFd8Gd2o
+
 sudo pacman -S virt-manager virt-viewer qemu vde2 ebtables iptables-nft nftables dnsmasq bridge-utils ovmf swtpm
 create new vm
 delete qemu new qemu user session
@@ -25,3 +27,12 @@ for g in /sys/kernel/iommu_groups/*; do
         echo -e "\t$(lspci -nns ${d##*/})"
     done;
 done;
+
+Should look like this
+
+copy id of the gpu and HDMI audio (1002:731f,1002:ab38)
+code /etc/mkinitcpio.conf
+MODULES=(vfio_pci vfio vfio_iommu_type1)
+make sure HOOKS has modconf
+sudo mkinitcpio -p linux
+reboot
