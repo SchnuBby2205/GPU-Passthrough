@@ -41,3 +41,4 @@ options vfio-pci ids=1002:731f,1002:ab38
 reboot
 test vfio
 dmesg | grep -i vfio
+pass the pci to the vm
