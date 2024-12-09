@@ -4,6 +4,9 @@ delete qemu new qemu user session
 code /etc/default/grub
 GRUB_CMDLINE_LINUX_DEFAULT="rd.driver.pre=vfio-pci intel_iommu=on iommu=pt video=efifb:off ....
 sudo grub-mkconfig -o /boot/grub/grub.cfg
+reboot
+
+then test iommu groups
 
 #!/bin/bash
 #  _____         _     _                                  
