@@ -34,5 +34,10 @@ copy id of the gpu and HDMI audio (1002:731f,1002:ab38)
 code /etc/mkinitcpio.conf
 MODULES=(vfio_pci vfio vfio_iommu_type1)
 make sure HOOKS has modconf
-sudo mkinitcpio -p linux
+sudo mkinitcpio -p [kernel] (linux or linux-lts...)
+sudo touch /etc/modprobe.d/vfio.conf
+code /etc/modprobe.d/vfio.conf
+options vfio-pci ids=1002:731f,1002:ab38
 reboot
+test vfio
+dmesg | grep -i vfio
