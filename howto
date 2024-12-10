@@ -10,6 +10,7 @@ vfio_iommu_type1.allow_unsafe_interrupts=1 // nur wenn lock memory fehler kommt
 ***
 (muss vendor reset installiert werden folgendes hinzufügen:)
 CONFIG_FTRACE=y CONFIG_KPROBES=y CONFIG_PCI_QUIRKS=y CONFIG_KALLSYMS=y CONFIG_KALLSYMS_ALL=y CONFIG_FUNCTION_TRACER=y 
+und das vendor-reset git repository https://github.com/SchnuBby2205/vendor-reset
 hierzu braucht man zusätzlich dkms und die Linux headers für das Kernel (yay -S linux-lts-headers)
 danach muss die modprobe.conf angepasst werden. bei modules vendor-reset ALS ERSTES EINFÜGEN!!
 ***
