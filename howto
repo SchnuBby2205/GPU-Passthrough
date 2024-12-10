@@ -5,6 +5,7 @@ create new vm
 delete qemu new qemu user session
 code /etc/default/grub
 GRUB_CMDLINE_LINUX_DEFAULT="rd.driver.pre=vfio-pci intel_iommu=on iommu=pt video=efifb:off vfio_iommu_type1.allow_unsafe_interrupts=1  ....
+vfio_iommu_type1.allow_unsafe_interrupts=1 // nur wenn lock memory fehler kommt
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 reboot
 
@@ -42,3 +43,21 @@ reboot
 test vfio
 dmesg | grep -i vfio
 pass the pci to the vm
+
+(Hier noch testen ob die VM bzw libvirt nicht über qemu:///system statt qemu:///session laufen muss)
+sudo chown root:kvm /dev/input/by-path/pci-0000:00:14.0-usb-0:5:1.0-event-kbd
+sudo chown root:kvm /dev/input/by-id/usb-Kingsis_Peripherals_ZOWIE_Gaming_mouse-event-mouse
+sudo chown root:kvm /dev/vfio/14 
+sudo chmod 0660 /dev/input/by-path/pci-0000:00:14.0-usb-0:5:1.0-event-kbd
+sudo chmod 0660 /dev/input/by-id/usb-Kingsis_Peripherals_ZOWIE_Gaming_mouse-event-mouse
+sudo chmod 0660 /dev/vfio/14
+
+für tastatur und maus in der VMl einfügen:
+    <input type="evdev">
+      <source dev="/dev/input/by-id/usb-Kingsis_Peripherals_ZOWIE_Gaming_mouse-event-mouse"/>
+    </input>
+    <input type="evdev">
+      <source dev="/dev/input/by-path/pci-0000:00:14.0-usb-0:5:1.0-event-kbd" grab="all" grabToggle="ctrl-ctrl" repeat="on"/>
+    </input>
+
+
