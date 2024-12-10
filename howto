@@ -74,3 +74,4 @@ für tastatur und maus in der VMl einfügen:
     </input>
 
 
+achtung libvirtd.service muss laufen (sudo systemctl enable libvirtd.service) (sudo systemctl start -now libvirtd.service)
