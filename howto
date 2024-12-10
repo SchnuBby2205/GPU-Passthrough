@@ -1,6 +1,7 @@
 https://www.youtube.com/watch?v=uOuzFd8Gd2o
 
 sudo pacman -S virt-manager virt-viewer qemu vde2 ebtables iptables-nft nftables dnsmasq bridge-utils ovmf swtpm
+!!!!!! achtung libvirtd.service muss laufen (sudo systemctl enable libvirtd.service) (sudo systemctl start -now libvirtd.service) !!!!!
 create new vm
 delete qemu new qemu user session
 code /etc/default/grub
