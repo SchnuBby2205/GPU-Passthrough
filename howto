@@ -57,13 +57,17 @@ pass the pci to the vm
 der benutzer in der kvm und libvirt gruppe sein
 sudo usermod -aG kvm,libvirt schnubby
 
+***
 (Hier noch testen ob die VM bzw libvirt nicht über qemu:///system statt qemu:///session laufen muss)
+!!!!!! achtung libvirtd.service muss laufen (sudo systemctl enable libvirtd.service) (sudo systemctl start -now libvirtd.service) !!!!!
+Dann kann man sich folgende Befehle sparen:
 sudo chown root:kvm /dev/input/by-path/pci-0000:00:14.0-usb-0:5:1.0-event-kbd
 sudo chown root:kvm /dev/input/by-id/usb-Kingsis_Peripherals_ZOWIE_Gaming_mouse-event-mouse
 sudo chown root:kvm /dev/vfio/14 
 sudo chmod 0660 /dev/input/by-path/pci-0000:00:14.0-usb-0:5:1.0-event-kbd
 sudo chmod 0660 /dev/input/by-id/usb-Kingsis_Peripherals_ZOWIE_Gaming_mouse-event-mouse
 sudo chmod 0660 /dev/vfio/14
+***
 
 für tastatur und maus in der VMl einfügen:
     <input type="evdev">
@@ -74,4 +78,6 @@ für tastatur und maus in der VMl einfügen:
     </input>
 
 
-achtung libvirtd.service muss laufen (sudo systemctl enable libvirtd.service) (sudo systemctl start -now libvirtd.service)
+folgende aliase in .zshrc anlegen um graka zu switchen
+alias amd-enable='sudo virsh nodedev-reattach pci_0000_03_00_0 && echo "GPU reattached (now host ready)" &&  sudo rmmod vfio_pci vfio_pci_core vfio_iommu_type1 && echo "VFIO drivers removed" && sudo modprobe -i amdgpu && echo "AMD drivers added" && echo "COMPLETED!"'
+alias amd-disable='sudo rmmod amdgpu && echo "AMD drivers removed" && sudo modprobe -i vfio_pci vfio_pci_core vfio_iommu_type1 && echo "VFIO drivers added" && sudo virsh nodedev-detach pci_0000_03_00_0 && echo "GPU detached (now vfio ready)" && echo "COMPLETED!"'
