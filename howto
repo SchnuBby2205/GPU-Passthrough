@@ -85,7 +85,7 @@ für tastatur und maus in der VMl einfügen:
 folgende aliase in .zshrc anlegen um graka zu switchen
 alias amd-enable='sudo virsh nodedev-reattach pci_0000_03_00_0 && echo "GPU reattached (now host ready)" &&  sudo rmmod vfio_pci vfio_pci_core vfio_iommu_type1 && echo "VFIO drivers removed" && sudo modprobe -i amdgpu && echo "AMD drivers added" && echo "COMPLETED!"'
 alias amd-disable='sudo rmmod amdgpu && echo "AMD drivers removed" && sudo modprobe -i vfio_pci vfio_pci_core vfio_iommu_type1 && echo "VFIO drivers added" && sudo virsh nodedev-detach pci_0000_03_00_0 && echo "GPU detached (now vfio ready)" && echo "COMPLETED!"'
-sollten die alias nicht funktionieren einmal 
+sollten die alias nicht funktionieren einmal (0000:03... ist die id der graka - lspci -nnk)
 echo "0000:03:00.0" > /sys/bus/pci/drivers/amdgpu/bind 
 ausführen ACHTUNG muss als root (su - root) ausgeführt werden.
 
