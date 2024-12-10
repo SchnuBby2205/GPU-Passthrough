@@ -8,8 +8,8 @@ beides im bios
 
 sudo pacman -S virt-manager virt-viewer qemu vde2 ebtables iptables-nft nftables dnsmasq bridge-utils ovmf swtpm
 !!!!!! achtung libvirtd.service muss laufen (sudo systemctl enable libvirtd.service) (sudo systemctl start -now libvirtd.service) !!!!!
+sudi virsh net-start default ?? als service ? 
 create new vm
-delete qemu new qemu user session
 code /etc/default/grub
 GRUB_CMDLINE_LINUX_DEFAULT="rd.driver.pre=vfio-pci intel_iommu=on iommu=pt video=efifb:off vfio_iommu_type1.allow_unsafe_interrupts=1 CONFIG_FTRACE=y CONFIG_KPROBES=y CONFIG_PCI_QUIRKS=y CONFIG_KALLSYMS=y CONFIG_KALLSYMS_ALL=y CONFIG_FUNCTION_TRACER=y ....
 
