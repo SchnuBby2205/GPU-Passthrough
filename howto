@@ -6,6 +6,9 @@ delete qemu new qemu user session
 code /etc/default/grub
 GRUB_CMDLINE_LINUX_DEFAULT="rd.driver.pre=vfio-pci intel_iommu=on iommu=pt video=efifb:off vfio_iommu_type1.allow_unsafe_interrupts=1 CONFIG_FTRACE=y CONFIG_KPROBES=y CONFIG_PCI_QUIRKS=y CONFIG_KALLSYMS=y CONFIG_KALLSYMS_ALL=y CONFIG_FUNCTION_TRACER=y ....
 
+komplette momentan funktionierende kernel parameter
+GRUB_CMDLINE_LINUX_DEFAULT="rd.driver.blacklist=radeon amdgpu.si_support=1 amdgpu.cik_support=1 rd.driver.pre=vfio-pci intel_iommu=on iommu=pt video=efifb:off vfio_iommu_type1.allow_unsafe_interrupts=1 CONFIG_FTRACE=y CONFIG_KPROBES=y CONFIG_PCI_QUIRKS=y CONFIG_KALLSYMS=y CONFIG_KALLSYMS_ALL=y CONFIG_FUNCTION_TRACER=y loglevel=3 quiet"
+
 bei der nächsten installation überprüfen ob amdgpu als kernel oparameter hinterlegt werden muss
 
 vfio_iommu_type1.allow_unsafe_interrupts=1 // nur wenn lock memory fehler kommt
