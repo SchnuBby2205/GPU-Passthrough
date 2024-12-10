@@ -54,6 +54,9 @@ test vfio
 dmesg | grep -i vfio
 pass the pci to the vm
 
+der benutzer in der kvm und libvirt gruppe sein
+sudo usermod -aG kvm,libvirt schnubby
+
 (Hier noch testen ob die VM bzw libvirt nicht über qemu:///system statt qemu:///session laufen muss)
 sudo chown root:kvm /dev/input/by-path/pci-0000:00:14.0-usb-0:5:1.0-event-kbd
 sudo chown root:kvm /dev/input/by-id/usb-Kingsis_Peripherals_ZOWIE_Gaming_mouse-event-mouse
