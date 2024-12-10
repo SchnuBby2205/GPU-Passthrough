@@ -1,22 +1,22 @@
 <domain type="kvm">
   <name>win10</name>
-  <uuid>8ba8818b-fadf-42d6-b296-b13f4918e054</uuid>
+  <uuid>552b29ab-0aaa-46c8-9753-1b85c20d5af5</uuid>
   <metadata>
     <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
       <libosinfo:os id="http://microsoft.com/win/10"/>
     </libosinfo:libosinfo>
   </metadata>
-  <memory unit="KiB">8290304</memory>
-  <currentMemory unit="KiB">8290304</currentMemory>
-  <vcpu placement="static">6</vcpu>
+  <memory unit="KiB">4194304</memory>
+  <currentMemory unit="KiB">4194304</currentMemory>
+  <vcpu placement="static">2</vcpu>
   <os firmware="efi">
     <type arch="x86_64" machine="pc-q35-9.1">hvm</type>
     <firmware>
       <feature enabled="no" name="enrolled-keys"/>
-      <feature enabled="yes" name="secure-boot"/>
+      <feature enabled="no" name="secure-boot"/>
     </firmware>
-    <loader readonly="yes" secure="yes" type="pflash" format="raw">/usr/share/edk2/x64/OVMF_CODE.secboot.4m.fd</loader>
-    <nvram template="/usr/share/edk2/x64/OVMF_VARS.4m.fd" templateFormat="raw" format="raw">/home/schnubby/.config/libvirt/qemu/nvram/win10_VARS.fd</nvram>
+    <loader readonly="yes" type="pflash" format="raw">/usr/share/edk2/x64/OVMF_CODE.4m.fd</loader>
+    <nvram template="/usr/share/edk2/x64/OVMF_VARS.4m.fd" templateFormat="raw" format="raw">/var/lib/libvirt/qemu/nvram/win10_VARS.fd</nvram>
     <boot dev="hd"/>
   </os>
   <features>
@@ -27,10 +27,6 @@
       <vapic state="on"/>
       <spinlocks state="on" retries="8191"/>
     </hyperv>
-    <kvm>
-      <hidden state="on"/>
-    </kvm>
-    <smm state="on"/>
   </features>
   <cpu mode="host-passthrough" check="none" migratable="on"/>
   <clock offset="localtime">
@@ -49,20 +45,13 @@
   <devices>
     <emulator>/usr/bin/qemu-system-x86_64</emulator>
     <disk type="file" device="disk">
-      <driver name="qemu" type="qcow2" discard="unmap"/>
+      <driver name="qemu" type="qcow2"/>
       <source file="/programmieren/VirtMachines/win10.qcow2"/>
-      <target dev="vda" bus="virtio"/>
-      <address type="pci" domain="0x0000" bus="0x02" slot="0x00" function="0x0"/>
-    </disk>
-    <disk type="file" device="cdrom">
-      <driver name="qemu" type="raw"/>
-      <source file="/programmieren/VirtMachines/Win10_22H2_German_x64v1.iso"/>
-      <target dev="sdb" bus="sata"/>
-      <readonly/>
-      <address type="drive" controller="0" bus="0" target="0" unit="1"/>
+      <target dev="sda" bus="sata"/>
+      <address type="drive" controller="0" bus="0" target="0" unit="0"/>
     </disk>
     <controller type="usb" index="0" model="qemu-xhci" ports="15">
-      <address type="pci" domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x02" slot="0x00" function="0x0"/>
     </controller>
     <controller type="pci" index="0" model="pcie-root"/>
     <controller type="pci" index="1" model="pcie-root-port">
@@ -137,8 +126,8 @@
     </controller>
     <controller type="pci" index="15" model="pcie-root-port">
       <model name="pcie-root-port"/>
-      <target chassis="15" port="0x1e"/>
-      <address type="pci" domain="0x0000" bus="0x00" slot="0x03" function="0x6"/>
+      <target chassis="15" port="0x8"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x0"/>
     </controller>
     <controller type="pci" index="16" model="pcie-to-pci-bridge">
       <model name="pcie-pci-bridge"/>
@@ -147,10 +136,11 @@
     <controller type="sata" index="0">
       <address type="pci" domain="0x0000" bus="0x00" slot="0x1f" function="0x2"/>
     </controller>
-    <interface type="user">
-      <mac address="52:54:00:5e:0f:ff"/>
+    <interface type="network">
+      <mac address="52:54:00:5a:33:fb"/>
+      <source network="default"/>
       <model type="e1000e"/>
-      <address type="pci" domain="0x0000" bus="0x06" slot="0x00" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
     </interface>
     <serial type="pty">
       <target type="isa-serial" port="0">
@@ -160,28 +150,29 @@
     <console type="pty">
       <target type="serial" port="0"/>
     </console>
-    <input type="tablet" bus="usb">
-      <address type="usb" bus="0" port="1"/>
-    </input>
-    <input type="mouse" bus="ps2"/>
-    <input type="keyboard" bus="ps2"/>
     <input type="evdev">
       <source dev="/dev/input/by-id/usb-Kingsis_Peripherals_ZOWIE_Gaming_mouse-event-mouse"/>
     </input>
     <input type="evdev">
       <source dev="/dev/input/by-path/pci-0000:00:14.0-usb-0:5:1.0-event-kbd" grab="all" grabToggle="ctrl-ctrl" repeat="on"/>
     </input>
+    <input type="mouse" bus="ps2"/>
+    <input type="keyboard" bus="ps2"/>
     <audio id="1" type="none"/>
     <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
         <address domain="0x0000" bus="0x03" slot="0x00" function="0x0"/>
       </source>
-      <rom bar="on"/>
-      <address type="pci" domain="0x0000" bus="0x04" slot="0x00" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x03" slot="0x00" function="0x0"/>
     </hostdev>
     <watchdog model="itco" action="reset"/>
     <memballoon model="virtio">
-      <address type="pci" domain="0x0000" bus="0x03" slot="0x00" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x04" slot="0x00" function="0x0"/>
     </memballoon>
+    <shmem name="looking-glass">
+      <model type="ivshmem-plain"/>
+      <size unit="M">32</size>
+      <address type="pci" domain="0x0000" bus="0x10" slot="0x01" function="0x0"/>
+    </shmem>
   </devices>
 </domain>
