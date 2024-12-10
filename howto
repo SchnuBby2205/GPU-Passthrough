@@ -4,8 +4,16 @@ sudo pacman -S virt-manager virt-viewer qemu vde2 ebtables iptables-nft nftables
 create new vm
 delete qemu new qemu user session
 code /etc/default/grub
-GRUB_CMDLINE_LINUX_DEFAULT="rd.driver.pre=vfio-pci intel_iommu=on iommu=pt video=efifb:off vfio_iommu_type1.allow_unsafe_interrupts=1  ....
+GRUB_CMDLINE_LINUX_DEFAULT="rd.driver.pre=vfio-pci intel_iommu=on iommu=pt video=efifb:off vfio_iommu_type1.allow_unsafe_interrupts=1 CONFIG_FTRACE=y CONFIG_KPROBES=y CONFIG_PCI_QUIRKS=y CONFIG_KALLSYMS=y CONFIG_KALLSYMS_ALL=y CONFIG_FUNCTION_TRACER=y ....
+
 vfio_iommu_type1.allow_unsafe_interrupts=1 // nur wenn lock memory fehler kommt
+***
+(muss vendor reset installiert werden folgendes hinzufügen:)
+CONFIG_FTRACE=y CONFIG_KPROBES=y CONFIG_PCI_QUIRKS=y CONFIG_KALLSYMS=y CONFIG_KALLSYMS_ALL=y CONFIG_FUNCTION_TRACER=y 
+hierzu braucht man zusätzlich dkms und die Linux headers für das Kernel (yay -S linux-lts-headers)
+danach muss die modprobe.conf angepasst werden. bei modules vendor-reset ALS ERSTES EINFÜGEN!!
+***
+
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 reboot
 
