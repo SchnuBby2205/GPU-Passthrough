@@ -111,4 +111,6 @@ https://looking-glass.io/artifact/stable/host
 
 alias für .zshrc
 alias looking-glass='looking-glass-client -s -m 97'
+kann auch in der userprefs.conf unter hypr hinterlegt werden.
+bind = $mainMod+Ctrl, V, exec, looking-glass-client -s -m 97
 ****
