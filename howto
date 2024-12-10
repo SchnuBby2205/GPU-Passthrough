@@ -84,3 +84,31 @@ alias amd-disable='sudo rmmod amdgpu && echo "AMD drivers removed" && sudo modpr
 sollten die alias nicht funktionieren einmal 
 echo "0000:03:00.0" > /sys/bus/pci/drivers/amdgpu/bind 
 ausführen ACHTUNG muss als root (su - root) ausgeführt werden.
+
+****
+LOOKING GLASS (https://looking-glass.io/downloads)
+https://looking-glass.io/artifact/stable/source
+cd Downloads
+tar -xzvf looking-glass-B6.tar.gz
+cd looking-glass-B6
+
+mkdir client/build
+cd client/build
+cmake ../
+make
+sudo make install
+
+ACHTUNG yay -S libxpresent kann ausgeführt werden wenn xpresent fehlt
+
+add to vm under devices
+<shmem name='looking-glass'>
+  <model type='ivshmem-plain'/>
+  <size unit='M'>32</size>
+</shmem>
+
+in der vm looking glass host laden (https://looking-glass.io/downloads)
+https://looking-glass.io/artifact/stable/host
+
+alias für .zshrc
+alias looking-glass='looking-glass-client -s -m 97'
+****
