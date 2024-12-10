@@ -4,7 +4,7 @@ sudo pacman -S virt-manager virt-viewer qemu vde2 ebtables iptables-nft nftables
 create new vm
 delete qemu new qemu user session
 code /etc/default/grub
-GRUB_CMDLINE_LINUX_DEFAULT="rd.driver.pre=vfio-pci intel_iommu=on iommu=pt video=efifb:off ....
+GRUB_CMDLINE_LINUX_DEFAULT="rd.driver.pre=vfio-pci intel_iommu=on iommu=pt video=efifb:off vfio_iommu_type1.allow_unsafe_interrupts=1  ....
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 reboot
 
