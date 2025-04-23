@@ -26,6 +26,10 @@ options vfio-pci ids=1002:731f,1002:ab38
 *** sudo usermod -aG kvm,libvirt schnubby
 
 ??? VirtIO Driver?
+Gemeinsamer Speicher aktivieren (unter RAM)
+neue Platte hinzufügen und Händisch Pfade angeben
+WINFSP installieren
+VIRTIO Dienst auf autostart
 
 add the GPU to the new VM
 für tastatur und maus in der XMl einfügen:
