@@ -1,0 +1,62 @@
+*** vt-d muss enabled sein
+*** ich musste die onboard grafikkarte also primary (erste karte von der gebooted wird) hinterlegen 
+*** beides im bios
+
+*** code /etc/default/grub
+#GRUB_CMDLINE_LINUX_DEFAULT="amdgpu.si_support=1 amdgpu.cik_support=1 rd.driver.pre=vfio-pci intel_iommu=on iommu=pt video=efifb:off vfio_iommu_type1.allow_unsafe_interrupts=1 loglevel=3 quiet"
+GRUB_CMDLINE_LINUX_DEFAULT="amdgpu.si_support=1 amdgpu.cik_support=1 rd.driver.pre=vfio-pci intel_iommu=on iommu=pt video=efifb:off loglevel=3 quiet"
+*** sudo grub-mkconfig -o /boot/grub/grub.cfg
+*** reboot
+
+*** code /etc/mkinitcpio.conf
+MODULES=(vfio_pci vfio vfio_iommu_type1)
+*** sudo mkinitcpio -p [kernel]
+*** sudo touch /etc/modprobe.d/vfio.conf
+*** code /etc/modprobe.d/vfio.conf
+softdep drm pre: vfio-pci
+options vfio-pci ids=1002:731f,1002:ab38
+*** reboot
+
+*** sudo pacman -S qemu-desktop libvirt edk2-ovmf virt-manager virt-viewer dnsmasq 
+*** sudo systemctl enable libvirtd.service
+*** sudo systemctl start libvirtd.service
+*** sudo virsh net-autostart default
+*** sudo virsh net-start default
+
+*** sudo usermod -aG kvm,libvirt schnubby
+
+??? VirtIO Driver?
+
+add the GPU to the new VM
+für tastatur und maus in der XMl einfügen:
+    <input type="evdev">
+        <source dev="/dev/input/by-id/usb-Kingsis_Peripherals_ZOWIE_Gaming_mouse-event-mouse"/>
+    </input>
+    <input type="evdev">
+        <source dev="/dev/input/by-path/pci-0000:00:14.0-usb-0:5:1.0-event-kbd" grab="all" grabToggle="ctrl-ctrl" repeat="on"/>
+    </input>
+    <audio id="1" type="pipewire" runtimeDir="/run/user/1000"> 
+        <input name="qemuinput"/> 
+        <output name="qemuoutput"/> 
+    </audio> 
+    <shmem name='looking-glass'>
+        <model type='ivshmem-plain'/>
+        <size unit='M'>32</size>
+    </shmem>
+
+  *** sudo touch /etc/tmpfiles.d/10-looking-glass.conf
+  *** code /etc/tmpfiles.d/10-looking-glass.conf
+  f	/dev/shm/looking-glass	0660	user	kvm	-
+  *** sudo systemd-tmpfiles --create /etc/tmpfiles.d/10-looking-glass.conf
+
+LOOKING GLASS (https://looking-glass.io/downloads)
+https://looking-glass.io/artifact/stable/source
+*** cd Downloads
+*** tar -xzvf looking-glass-B6.tar.gz
+*** cd looking-glass-B6
+*** mkdir client/build
+*** cd client/build
+*** cmake ../
+*** make
+*** sudo make install
+ACHTUNG yay -S libxpresent kann ausgeführt werden wenn xpresent fehlt
