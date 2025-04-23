@@ -59,4 +59,5 @@ https://looking-glass.io/artifact/stable/source
 *** cmake ../
 *** make
 *** sudo make install
+Danach LOOKING GLASS auf Host installieren
 ACHTUNG yay -S libxpresent kann ausgeführt werden wenn xpresent fehlt
