@@ -103,12 +103,17 @@ function bindVFIO() {
 }
 
 DRIVER=$(checkActiveDriver "$GPU")
+echo "Active driver is ${DRIVER}..."
 
 case $DRIVER in 
   vfio)
+    echo "Starting switch to AMDGPU..."
     unbindVFIO $GPU $DRIVER;;
+    echo "New active driver is AMDGPU!"
   amd)
+    echo "Starting switch to VFIO..."
     bindVFIO $GPU $DRIVER;;
+    echo "New active driver is VFIO!"
   *) 
     echo "No valid driver to switch from!"
     exit 0;;
