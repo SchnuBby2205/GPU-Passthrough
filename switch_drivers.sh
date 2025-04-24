@@ -78,6 +78,7 @@ function removeDrivers() {
     *)
       echo "No Driver to Remove!"
       exit 0;;
+  esac
 }
 
 ## VFIO entfernen und AMDGPU setzen
