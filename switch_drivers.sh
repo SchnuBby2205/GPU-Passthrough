@@ -10,12 +10,12 @@ AUDIO_ID="1002:ab38"
 function checkActiveDriver() {
   DEVICE=$1
   ## VFIO?
-  DRIVER="$( ls -l /sys/bus/pci/devices/${DEV}/driver | grep vfio )"
+  DRIVER="$( ls -l /sys/bus/pci/devices/${DEVICE}/driver | grep vfio )"
   if [[ -n "$DRIVER" ]]; then
     echo "vfio"
   fi
   ## AMDGPU
-  DRIVER="$( ls -l /sys/bus/pci/devices/${DEV}/driver | grep amdgpu )"
+  DRIVER="$( ls -l /sys/bus/pci/devices/${DEVICE}/driver | grep amdgpu )"
   if [[ -n "$DRIVER" ]]; then
     echo "amd"
   fi
@@ -30,10 +30,10 @@ function rescanPCI() {
 
   ## AMD Driver laden
   echo -n "Loading AMDGPU Drivers... "
-  modprobe drm
+  #modprobe drm
   modprobe amdgpu
-  modprobe radeon
-  modprobe drm_kms_helper
+  #modprobe radeon
+  #modprobe drm_kms_helper
   echo "Done!"
 }
 
@@ -67,10 +67,10 @@ function removeDrivers() {
     amd)
       ## PCI Driver entfernen
       echo -n "Unbinding AMDGPU from ${DEVICE}... "    
-      modprobe -r drm_kms_helper
-      modprobe -r amdgpu
-      modprobe -r radeon
-      modprobe -r drm
+      #modprobe -r drm_kms_helper
+      #modprobe -r amdgpu
+      #modprobe -r radeon
+      #modprobe -r drm
       echo ${DEVICE} > /sys/bus/pci/devices/${DEVICE}/driver/unbind
       echo vfio-pci > /sys/bus/pci/devices/${DEVICE}/driver_override
       sleep 0.5
@@ -102,22 +102,22 @@ function bindVFIO() {
   echo "Done!"
 }
 
-DRIVER=$(checkActiveDriver "$GPU")
+DRIVER=$(checkActiveDriver $GPU)
 echo "Active driver is ${DRIVER}..."
 
 case $DRIVER in 
   vfio)
     echo "Starting switch to AMDGPU..."
-    unbindVFIO $GPU $DRIVER;;
-    echo "New active driver is AMDGPU!"
+    unbindVFIO $GPU $DRIVER
+    echo "New active driver is AMDGPU!";;
   amd)
     echo "Starting switch to VFIO..."
-    bindVFIO $GPU $DRIVER;;
-    echo "New active driver is VFIO!"
+    bindVFIO $GPU $DRIVER
+    echo "New active driver is VFIO!";;
   *) 
     echo "No valid driver to switch from!"
     exit 0;;
 esac
 
 #lspci -nnkd $VGA_DEVICE_ID && lspci -nnkd $AUDIO_DEVICE_ID
-lspci -nnkd $GPU_ID
+#lspci -nnkd $GPU_ID
