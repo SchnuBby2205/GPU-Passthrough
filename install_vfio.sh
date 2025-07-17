@@ -16,8 +16,8 @@ echo "Done!"
 
 echo -n "Setting up mkinitcpio.conf... "
 sed -i 's/MODULES=()/MODULES=(vfio_pci vfio vfio_iommu_type1)/g' /etc/mkinitcpio.conf
-sudo mkinitcpio -p $KERNEL
 sudo echo -e "softdep drm pre: vfio-pci\noptions vfio-pci ids=1002:731f,1002:ab38" > "/etc/modprobe.d/vfio.conf"
+sudo mkinitcpio -p $KERNEL
 echo "Done!"
 
 echo -n "Installing virt tools... "
