@@ -1,78 +1,152 @@
-# GPU-Passthrough
+# VFIO GPU Passthrough Setup & Switch Script
 
-A script to automate the setup of GPU passthrough (VFIO) on Linux systems using GRUB, mkinitcpio, and virtualization tools. This is particularly useful for running virtual machines with direct GPU access.
-
-## Features
-
-- Automatically configures GRUB for VFIO
-- Updates mkinitcpio to include necessary VFIO modules
-- Sets up VFIO kernel module options
-- Installs virtualization tools: QEMU, libvirt, OVMF, virt-manager, virt-viewer, dnsmasq
-- Enables and starts required services
-- Adds user to necessary groups for virtualization
-
-## Prerequisites
-
-- VT-D (Intel) or AMD-Vi (AMD) must be enabled in BIOS
-- Primary GPU must **not** be the one intended for passthrough
-- Arch Linux or compatible distribution (uses pacman as package manager)
-- Root privileges
-
-## Usage
-
-1. **Set up BIOS:**
-   - Enable VT-D (Intel) or AMD-Vi (AMD)
-   - Set boot/primary GPU to a different card than the one you want to passthrough
-
-2. **Run the script:**
-
-   ```bash
-   chmod +x gpu-passthrough.sh
-   sudo ./gpu-passthrough.sh <kernel-preset>
-   ```
-   - Replace `<kernel-preset>` with your mkinitcpio kernel preset (e.g., `linux`).
-
-3. **Restart your system:**
-
-   After the script finishes, reboot your machine to apply the changes.
-
-## Script Breakdown
-
-- **GRUB Configuration:**  
-  Adds necessary VFIO and IOMMU options.
-
-- **mkinitcpio Configuration:**  
-  Adds VFIO modules to early boot and triggers an initramfs rebuild.
-
-- **VFIO Module Options:**  
-  Specifies IDs for the GPU to be passed through (edit these IDs if your GPU is different).
-
-- **Virtualization Tools:**  
-  Installs and configures QEMU, libvirt, OVMF firmware, virt-manager, virt-viewer, and DNSMASQ.
-
-- **User Groups:**  
-  Adds the user `schnubby` to `kvm` and `libvirt` groups (change username as needed).
-
-## Customization
-
-- **GPU IDs:**  
-  Edit the line in the script for your GPU's vendor and device IDs:
-  ```bash
-  echo -e "softdep drm pre: vfio-pci\noptions vfio-pci ids=1002:731f,1002:ab38" > "/etc/modprobe.d/vfio.conf"
-  ```
-  Replace the IDs with those from your GPU. Use `lspci -nn` to find them.
-
-- **User:**  
-  If your username is not `schnubby`, change the `usermod` line accordingly.
-
-## Disclaimer
-
-This script modifies important system files and installs packages. Use at your own risk and make sure you have backups of your configuration files.
-
-## License
-
-MIT License 
+This Bash script automates the setup and switching of a GPU for passthrough via **VFIO** on Arch-based Linux distributions. It handles installation of required packages, kernel parameters, driver binding/unbinding, and provides a simple interface to toggle between host and guest GPU use.
 
 ---
 
-**Contributions and issues are welcome!**
+## ⚙️ Features
+
+* ✅ One-time installation to configure IOMMU, VFIO, and initramfs
+* ✅ Auto-detects current GPU driver in use (`vfio-pci`, `amdgpu`, `nvidia`)
+* ✅ Dynamically switches between host and guest (VM) use
+* ✅ Supports both **GRUB** and **systemd-boot**
+* ✅ Automatically handles modprobe rules and blacklists native drivers
+* ✅ Safe, modular, and user-friendly
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/SchnuBby2205/GPU-Passthrough.git
+cd GPU-Passthrough
+```
+
+### 2. Edit GPU/Audio PCI IDs
+
+Open the script and edit the PCI addresses at the top of the script:
+
+```bash
+PASS_GPU="0000:00:03.0"
+PASS_AUDIO="0000:00:03.1"
+```
+
+Use `lspci` to find the correct addresses:
+
+```bash
+lspci -nn
+```
+
+---
+
+## 💠 Installation
+
+Run the script with the `install` argument **as root**:
+
+```bash
+sudo ./vfio.sh install
+```
+
+This will:
+
+* Install required packages via `pacman`
+* Enable `libvirtd`
+* Set kernel parameters (`intel_iommu=on iommu=pt`) (for amd you need to change this to the corresponding amd arguments)
+* Create modprobe and blacklist rules
+* Patch `mkinitcpio.conf`
+* Rebuild initramfs
+
+🧐 **Reboot required after installation**
+
+---
+
+## 🔁 Switching Between Host and Guest
+
+After rebooting:
+
+### 🖥️ Switch to VFIO (for VM use)
+
+```bash
+sudo ./vfio.sh
+```
+
+If GPU is currently using host drivers, it will unbind and attach to `vfio-pci`.
+
+### 🏠 Switch back to Host (amdgpu/nvidia)
+
+```bash
+sudo ./vfio.sh
+```
+
+If GPU is currently bound to `vfio-pci`, it will switch back to your native driver.
+
+---
+
+## 🥪 Check VFIO Status
+
+After reboot, verify IOMMU and VFIO bindings:
+
+```bash
+dmesg | grep -i iommu
+lspci -nnk | grep -A 3 -i 'vga\|audio'
+```
+
+---
+
+## 📋 Script Overview
+
+* `install` — configures system for VFIO passthrough
+* `vm()` — binds GPU to `vfio-pci`
+* `host()` — rebinds GPU to native driver
+* `checkActiveDriver()` — detects current GPU driver
+* Automatic fallback and logging
+
+---
+
+## 📋 Requirements
+
+* Arch Linux or Arch-based distro
+* GRUB or systemd-boot
+* IOMMU-capable CPU and motherboard
+* Secondary GPU for host (if using passthrough)
+
+---
+
+## 📦 Packages Installed
+
+* `qemu`, `virt-manager`, `libvirt`, `ovmf`
+* `dnsmasq`, `vde2`, `openbsd-netcat`, `edk2-ovmf`
+* (All installed using `pacman`)
+
+---
+
+## 🤛 FAQ
+
+**Q: Do I need to reboot after running `install`?**
+A: Yes. The kernel parameters and initramfs changes require a reboot.
+
+**Q: What if I use NVIDIA?**
+A: The script will automatically blacklist NVIDIA or AMD drivers based on your GPU.
+
+**Q: Can I use this on Ubuntu?**
+A: No, this script is tailored for Arch-based distros.
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you'd like to change.
+
+---
+
+## 🛡️ License
+
+MIT License
+
+---
+
+## 🙏 Acknowledgements
+
+Thanks to the VFIO community and the Arch Wiki for amazing documentation and support.
